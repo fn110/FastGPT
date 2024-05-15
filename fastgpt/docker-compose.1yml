@@ -144,3 +144,23 @@ services:
       - ./oneapi:/data
 networks:
   fastgpt:
+
+mongodb://root:admin@localhost:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.10.1
+# 进入容器，进入mongo shell
+docker exec -it mongo bash
+mongo
+use admin
+db.auth('username','password')
+
+# 获取当前的副本集配置
+var cfg = rs.conf()
+
+#  将mongo:27017改为ip:27017（假设ip是实际ip地址）
+cfg.members[0].host = "ip:27017"
+
+# 应用新的配置
+rs.reconfig(cfg, { force: true })
+
+# 验证配置并检查状态
+rs.conf()
+rs.status()
